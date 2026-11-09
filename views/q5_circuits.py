@@ -20,33 +20,33 @@ g = g.sort_values("평균변동", ascending=False)
 
 if g.empty:
     st.warning("조건에 맞는 서킷이 없습니다. 기간을 넓히거나 최소 개최 횟수를 낮춰 보세요.")
-    st.stop()
-hi, lo = g.iloc[0], g.iloc[-1]
-st.info(f"{y0}~{y1}년 완주자 기준, 출발 순위와 결승 순위의 차이가 가장 큰 곳은 **{hi['name']}** (평균 {hi['평균변동']}자리), "
-        f"가장 작은 곳은 **{lo['name']}** ({lo['평균변동']}자리)입니다.")
+else:
+    hi, lo = g.iloc[0], g.iloc[-1]
+    st.info(f"{y0}~{y1}년 완주자 기준, 출발 순위와 결승 순위의 차이가 가장 큰 곳은 **{hi['name']}** (평균 {hi['평균변동']}자리), "
+            f"가장 작은 곳은 **{lo['name']}** ({lo['평균변동']}자리)입니다.")
 
-a, b = st.columns(2)
-for col, title, df, asc in [(a, "변동이 큰 서킷 15", g.head(15), False), (b, "변동이 작은 서킷 15", g.tail(15).iloc[::-1], True)]:
-    fig = px.bar(df, x="평균변동", y="name", orientation="h", text="평균변동", color_discrete_sequence=[BLUE],
-                 hover_data=["개최"])
-    fig.update_yaxes(autorange="reversed", title="")
-    fig.update_xaxes(title="평균 순위 변동(자리)")
-    col.markdown(f"**{title}**")
-    with col:
-        show(fig, 460)
+    a, b = st.columns(2)
+    for col, title, df, asc in [(a, "변동이 큰 서킷 15", g.head(15), False), (b, "변동이 작은 서킷 15", g.tail(15).iloc[::-1], True)]:
+        fig = px.bar(df, x="평균변동", y="name", orientation="h", text="평균변동", color_discrete_sequence=[BLUE],
+                     hover_data=["개최"])
+        fig.update_yaxes(autorange="reversed", title="")
+        fig.update_xaxes(title="평균 순위 변동(자리)")
+        col.markdown(f"**{title}**")
+        with col:
+            show(fig, 460)
 
-st.subheader("지도")
-rng = max(g["평균변동"].max() - g["평균변동"].min(), 1e-9)
-g["크기"] = 0.35 + (g["평균변동"] - g["평균변동"].min()) / rng  # 값 차이가 눈에 띄도록 0.35~1.35로 늘림
-fig = px.scatter_geo(g, lat="lat", lon="lng", size="크기", color="평균변동", size_max=26,
-                     hover_name="name", hover_data={"country": True, "개최": True, "평균변동": True, "크기": False, "lat": False, "lng": False},
-                     color_continuous_scale=["#a9c9f0", "#1f5fb0"])
-fig.update_geos(projection_type="natural earth", bgcolor="rgba(0,0,0,0)", showframe=False, showcoastlines=False,
-                showland=True, landcolor="rgba(128,128,128,0.16)", showcountries=True,
-                countrycolor="rgba(128,128,128,0.35)", showocean=False)
-fig.update_traces(marker=dict(line=dict(width=1, color="white"), opacity=0.85))
-fig.update_layout(coloraxis_colorbar=dict(title="평균 변동(자리)", thickness=12, len=0.6))
-show(fig, 450)
-with st.expander("표로 보기"):
-    table(g[["name", "country", "개최", "평균변동"]].rename(columns={"name": "서킷", "country": "나라"}))
-st.caption("평균 순위 변동 = |출발 순위 − 결승 순위|의 평균(완주자만). 실제 추월 횟수가 아니라 대리 지표이고, 시대마다 출전 대수가 달라서 기간을 고정해 비교하는 것이 좋습니다.")
+    st.subheader("지도")
+    rng = max(g["평균변동"].max() - g["평균변동"].min(), 1e-9)
+    g["크기"] = 0.35 + (g["평균변동"] - g["평균변동"].min()) / rng  # 값 차이가 눈에 띄도록 0.35~1.35로 늘림
+    fig = px.scatter_geo(g, lat="lat", lon="lng", size="크기", color="평균변동", size_max=26,
+                         hover_name="name", hover_data={"country": True, "개최": True, "평균변동": True, "크기": False, "lat": False, "lng": False},
+                         color_continuous_scale=["#a9c9f0", "#1f5fb0"])
+    fig.update_geos(projection_type="natural earth", bgcolor="rgba(0,0,0,0)", showframe=False, showcoastlines=False,
+                    showland=True, landcolor="rgba(128,128,128,0.16)", showcountries=True,
+                    countrycolor="rgba(128,128,128,0.35)", showocean=False)
+    fig.update_traces(marker=dict(line=dict(width=1, color="white"), opacity=0.85))
+    fig.update_layout(coloraxis_colorbar=dict(title="평균 변동(자리)", thickness=12, len=0.6))
+    show(fig, 450)
+    with st.expander("표로 보기"):
+        table(g[["name", "country", "개최", "평균변동"]].rename(columns={"name": "서킷", "country": "나라"}))
+    st.caption("평균 순위 변동 = |출발 순위 − 결승 순위|의 평균(완주자만). 실제 추월 횟수가 아니라 대리 지표이고, 시대마다 출전 대수가 달라서 기간을 고정해 비교하는 것이 좋습니다.")
