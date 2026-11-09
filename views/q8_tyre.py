@@ -19,7 +19,7 @@ stops = P[P["정차"].between(0, 4)].groupby("정차").agg(n=("position", "size"
 start = P.groupby("시작").agg(n=("position", "size"), 득실=("득실", "mean")).reindex(order).dropna().reset_index()
 
 st.title("🛞 타이어 전략은 결과를 바꾸나?")
-st.warning(f"타이어 데이터는 **{t['raceId'].nunique()}개 레이스**(2025~2026 시즌의 일부)뿐입니다. 아래는 상관관계이고 전략의 효과를 증명하지 않습니다.")
+st.caption(f"⚠️ 타이어 데이터는 **{t['raceId'].nunique()}개 레이스**(2025~2026 시즌의 일부)뿐입니다. 아래는 상관관계이고 전략의 효과를 증명하지 않습니다.")
 longest = cp.loc[cp["평균랩"].idxmax()]
 st.info(f"스틴트가 가장 긴 타이어는 **{longest['compound']}** (평균 {longest['평균랩']}랩), "
         f"가장 많이 쓴 타이어는 **{cp.loc[cp['스틴트'].idxmax(), 'compound']}** ({int(cp['스틴트'].max())}스틴트)입니다.")

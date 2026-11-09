@@ -14,7 +14,7 @@ m["날씨"] = m["rainfall"].map({True: "비 옴", False: "비 안 옴"})
 g = m.groupby("날씨").agg(레이스=("raceId", "size"), 변동=("변동", "mean"), 리타이어=("리타이어", "mean")).reset_index()
 
 st.title("🌧️ 비가 오면 결과가 뒤집히나?")
-st.warning(f"날씨 데이터는 **{len(w)}개 레이스**({int(m['year'].min())}~{int(m['year'].max())}, {m['date'].max():%Y-%m-%d}까지)뿐입니다. 표본이 작아서 결론이 약합니다.")
+st.caption(f"⚠️ 날씨 데이터는 **{len(w)}개 레이스**({int(m['year'].min())}~{int(m['year'].max())}, {m['date'].max():%Y-%m-%d}까지)뿐입니다. 표본이 작아서 결론이 약합니다.")
 if set(g["날씨"]) == {"비 옴", "비 안 옴"}:
     r_, d_ = g.set_index("날씨").loc["비 옴"], g.set_index("날씨").loc["비 안 옴"]
     st.info(f"비 온 레이스({int(r_['레이스'])}개)는 평균 순위 변동 **{r_['변동']:.1f}자리**, 리타이어 **{r_['리타이어']:.1f}%**; "

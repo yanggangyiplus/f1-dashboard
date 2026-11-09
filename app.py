@@ -1,5 +1,7 @@
 import streamlit as st
 
+from ui import style
+
 st.set_page_config(page_title="F1 대시보드", page_icon="🏁", layout="wide")
 
 pages = [
@@ -14,4 +16,5 @@ pages = [
     st.Page("views/q7_rain.py", title="날씨", icon="🌧️"),
     st.Page("views/q8_tyre.py", title="타이어", icon="🛞"),
 ]
+style()
 st.navigation(pages, position="top").run()

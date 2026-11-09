@@ -18,14 +18,13 @@ w = rr.iloc[0]
 pole = rr[rr["grid"] == 1]
 fl = rr[rr["rank"] == 1]
 c = st.columns([1.1, 1.1, 1.6, 0.8, 0.8])
-c[0].metric("우승", w["driver"])
-c[0].caption(w["team"])
-c[1].metric("폴포지션", pole.iloc[0]["driver"] if len(pole) else "-")
-c[2].metric("최속 랩", fl.iloc[0]["driver"] if len(fl) else "-")
-if len(fl):
-    c[2].caption(f"{fl.iloc[0]['fastestLapTime']} · {fl.iloc[0]['team']}")
-c[3].metric("완주 / 출발", f"{int(rr['classified'].sum())} / {int(rr['started'].sum())}")
-c[4].metric("폴 → 우승", "예" if len(pole) and pole.iloc[0]["driverId"] == w["driverId"] else "아니오")
+off = dict(delta_color="off", delta_arrow="off")  # 보조 문구를 카드 안에 넣되 화살표는 숨김
+c[0].metric("우승", w["driver"], w["team"], **off)
+c[1].metric("폴포지션", pole.iloc[0]["driver"] if len(pole) else "-", pole.iloc[0]["team"] if len(pole) else None, **off)
+c[2].metric("최속 랩", fl.iloc[0]["driver"] if len(fl) else "-",
+            f"{fl.iloc[0]['fastestLapTime']} · {fl.iloc[0]['team']}" if len(fl) else None, **off)
+c[3].metric("완주 / 출발", f"{int(rr['classified'].sum())} / {int(rr['started'].sum())}", f"리타이어 {int(rr['dnf'].sum())}명", **off)
+c[4].metric("폴 → 우승", "예" if len(pole) and pole.iloc[0]["driverId"] == w["driverId"] else "아니오", f"우승자 {int(w['grid'])}번 출발", **off)
 
 st.subheader("레이스 결과")
 out = rr[["positionText", "driver", "team", "grid", "laps", "time", "points", "status"]].copy()

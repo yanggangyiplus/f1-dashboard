@@ -36,10 +36,16 @@ for col, title, df, asc in [(a, "변동이 큰 서킷 15", g.head(15), False), (
         show(fig, 460)
 
 st.subheader("지도")
-fig = px.scatter_geo(g, lat="lat", lon="lng", size="평균변동", hover_name="name",
-                     hover_data=["country", "개최", "평균변동"], projection="natural earth",
-                     color_discrete_sequence=[BLUE])
-fig.update_traces(marker=dict(line=dict(width=1, color="white")))
+rng = max(g["평균변동"].max() - g["평균변동"].min(), 1e-9)
+g["크기"] = 0.35 + (g["평균변동"] - g["평균변동"].min()) / rng  # 값 차이가 눈에 띄도록 0.35~1.35로 늘림
+fig = px.scatter_geo(g, lat="lat", lon="lng", size="크기", color="평균변동", size_max=26,
+                     hover_name="name", hover_data={"country": True, "개최": True, "평균변동": True, "크기": False, "lat": False, "lng": False},
+                     color_continuous_scale=["#a9c9f0", "#1f5fb0"])
+fig.update_geos(projection_type="natural earth", bgcolor="rgba(0,0,0,0)", showframe=False, showcoastlines=False,
+                showland=True, landcolor="rgba(128,128,128,0.16)", showcountries=True,
+                countrycolor="rgba(128,128,128,0.35)", showocean=False)
+fig.update_traces(marker=dict(line=dict(width=1, color="white"), opacity=0.85))
+fig.update_layout(coloraxis_colorbar=dict(title="평균 변동(자리)", thickness=12, len=0.6))
 show(fig, 450)
 with st.expander("표로 보기"):
     table(g[["name", "country", "개최", "평균변동"]].rename(columns={"name": "서킷", "country": "나라"}))
