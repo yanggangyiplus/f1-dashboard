@@ -1,0 +1,9 @@
+.DS_Store
+__pycache__/
+data/archive/
+data/f1_backup/
+# 앱이 쓰지 않는 큰 표 (update_f1.py 도 필요로 하지 않음)
+data/f1/lap_times.csv
+data/f1/pit_stops.csv
+data/f1/constructor_results.csv
+data/f1/practice_results.csv
